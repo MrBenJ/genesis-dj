@@ -1,0 +1,283 @@
+/*
+  Genesis DJ: matte hardware theme. Dark-only on purpose (it gets captured for stream).
+  One accent (signal orange), used only for "live" state: pressed keys, MIDI connected, learning, primary action.
+  Shape rule: panels 12px, controls 8px, Genesis face buttons fully round (they are round on the real pad).
+*/
+
+:root {
+  --bg: #0d0d0f;
+  --surface: #151518;
+  --surface-2: #1c1c20;
+  --surface-3: #25252a;
+  --line: #2b2b31;
+  --line-strong: #3a3a41;
+  --text: #ececee;
+  --muted: #9a9aa3;
+  --faint: #66666e;
+  --accent: #ec6a35;
+  --accent-ink: #160b06;
+
+  --r-panel: 12px;
+  --r-ctl: 8px;
+
+  --sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --mono: "Geist Mono Variable", ui-monospace, monospace;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; }
+
+body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, select, input { font: inherit; color: inherit; }
+
+/* ---------- top bar ---------- */
+
+.bar {
+  height: 64px;
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+}
+.brand span { color: var(--muted); font-weight: 500; margin-left: 5px; }
+
+.bar-controls { display: flex; align-items: center; gap: 10px; }
+.bar-end { display: flex; align-items: center; justify-content: flex-end; gap: 14px; }
+
+.field { display: flex; align-items: center; gap: 10px; }
+.field-label { color: var(--muted); font-size: 13px; }
+
+.select { position: relative; display: inline-flex; align-items: center; }
+.select select {
+  appearance: none;
+  height: 36px;
+  min-width: 230px;
+  padding: 0 34px 0 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-ctl);
+  font-weight: 500;
+  cursor: pointer;
+}
+.select select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.select i { position: absolute; right: 11px; color: var(--muted); pointer-events: none; }
+
+.btn {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: var(--r-ctl);
+  border: 1px solid transparent;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s var(--ease), border-color .15s var(--ease), transform .1s var(--ease);
+}
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn-primary:hover { background: #f27a48; }
+.btn-ghost { background: transparent; border-color: var(--line-strong); color: var(--text); }
+.btn-ghost:hover { background: var(--surface-2); }
+
+kbd {
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  padding: 3px 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+}
+
+.midi { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; max-width: 320px; }
+.midi-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.led { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--faint); flex-shrink: 0; }
+.midi[data-state="ok"] { color: var(--text); }
+.midi[data-state="ok"] .led { background: var(--accent); border-color: var(--accent); }
+.midi[data-state="error"] .led { border-style: dashed; }
+
+/* ---------- stage ---------- */
+
+.stage {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  padding: 20px;
+}
+body.panel-hidden .stage { grid-template-columns: minmax(0, 1fr); }
+body.panel-hidden .rail { display: none; }
+
+.screen {
+  position: relative;
+  min-height: 0;
+  border-radius: var(--r-panel);
+  background: #08080a;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.screen.dragging { border-color: var(--accent); }
+
+#game { position: absolute; inset: 0; }
+
+.empty {
+  position: relative;
+  max-width: 380px;
+  text-align: center;
+  padding: 24px;
+}
+.empty i { font-size: 72px; color: var(--faint); }
+.empty h1 { margin: 12px 0 8px; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+.empty p { margin: 0; color: var(--muted); }
+.screen.dragging .empty i { color: var(--accent); }
+.screen.running .empty { display: none; }
+
+/* ---------- rail ---------- */
+
+.rail {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.deck {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  padding: 14px 16px 12px;
+}
+.deck-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.deck-head h2 { margin: 0; font-size: 14px; font-weight: 600; }
+.deck-head span { color: var(--muted); font-size: 12px; }
+
+/* The pad mimics a 3-button Genesis controller: d-pad, start, A B C. */
+.pad {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 34px);
+  grid-template-rows: repeat(3, 34px);
+}
+.dpad .key { border-radius: 6px; font-size: 15px; }
+.dpad [data-btn="UP"] { grid-area: 1 / 2; }
+.dpad [data-btn="LEFT"] { grid-area: 2 / 1; }
+.dpad [data-btn="RIGHT"] { grid-area: 2 / 3; }
+.dpad [data-btn="DOWN"] { grid-area: 3 / 2; }
+.dpad .hub { grid-area: 2 / 2; background: var(--surface-2); }
+
+.start { justify-self: center; }
+.start .key {
+  width: 58px;
+  height: 22px;
+  border-radius: 999px;
+  font: 600 10px/1 var(--mono);
+  letter-spacing: .04em;
+}
+
+.face { display: flex; gap: 8px; align-items: center; }
+.face .key {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 15px;
+}
+.face [data-btn="A"] { transform: translateY(8px); }
+.face [data-btn="C"] { transform: translateY(-8px); }
+
+.key {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background: var(--surface-3);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  cursor: pointer;
+  transition: background .08s, border-color .15s, color .08s;
+}
+.key:hover { border-color: var(--muted); }
+.key:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.key.unbound { background: transparent; border-style: dashed; color: var(--faint); }
+.key.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.key.learning { border-color: var(--accent); color: var(--accent); background: transparent; }
+
+.deck-detail {
+  margin-top: 16px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font: 12px/1.4 var(--mono);
+  color: var(--muted);
+  min-height: 27px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.deck-detail b { color: var(--text); font-weight: 500; }
+.deck-detail.live { color: var(--accent); }
+
+.rail-note { margin: 0; color: var(--muted); font-size: 13px; }
+
+.rail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rail-actions .btn { justify-content: center; }
+
+.monitor h2 { margin: 6px 0 8px; font-size: 12px; font-weight: 500; color: var(--muted); }
+.monitor pre {
+  margin: 0;
+  height: 132px;
+  overflow: hidden;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  font: 11.5px/1.55 var(--mono);
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .key.learning { animation: learn 0.9s var(--ease) infinite alternate; }
+  @keyframes learn { from { box-shadow: 0 0 0 0 rgb(236 106 53 / .0); } to { box-shadow: 0 0 0 4px rgb(236 106 53 / .28); } }
+}
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 1024px) {
+  .bar { grid-template-columns: 1fr auto; height: auto; padding: 12px 16px; }
+  .bar-controls { grid-column: 1 / -1; grid-row: 2; }
+  .stage { grid-template-columns: 1fr; padding: 16px; }
+  .screen { aspect-ratio: 4 / 3; }
+  .rail { overflow: visible; }
+  .midi { max-width: 180px; }
+}

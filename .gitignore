@@ -1,0 +1,8 @@
+.DS_Store
+# ROMs are never committed
+*.gen
+*.smd
+*.bin
+*.zip
+*.7z
+roms/

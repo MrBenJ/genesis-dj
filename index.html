@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Genesis DJ</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/geist@5/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/geist-mono@5/index.css">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">Genesis<span>DJ</span></div>
+
+    <div class="bar-controls">
+      <label class="field">
+        <span class="field-label">Controller</span>
+        <span class="select">
+          <select id="controller"></select>
+          <i class="ph ph-caret-up-down" aria-hidden="true"></i>
+        </span>
+      </label>
+      <label class="btn btn-primary">
+        <i class="ph-bold ph-upload-simple" aria-hidden="true"></i>
+        Load ROM
+        <input type="file" id="rom" accept=".md,.gen,.bin,.smd,.zip,.7z" hidden>
+      </label>
+    </div>
+
+    <div class="bar-end">
+      <div id="midi-status" class="midi" data-state="idle">
+        <span class="led" aria-hidden="true"></span>
+        <span class="midi-text">Starting MIDI</span>
+      </div>
+      <button class="btn btn-ghost" id="toggle-panel" title="Hide or show the side panel">
+        <i class="ph ph-sidebar-simple" aria-hidden="true"></i>
+        <span class="toggle-label">Hide panel</span>
+        <kbd>H</kbd>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <section class="screen" id="screen">
+      <div id="game"></div>
+      <div class="empty" id="empty">
+        <i class="ph-thin ph-game-controller" aria-hidden="true"></i>
+        <h1>Drop a Genesis ROM here</h1>
+        <p>Or use Load ROM above. The controller lights up the pads on the right before the game starts, so you can test it first.</p>
+      </div>
+    </section>
+
+    <aside class="rail" id="panel">
+      <div id="pads"></div>
+      <p class="rail-note" id="hint"></p>
+      <div class="rail-actions">
+        <button class="btn btn-ghost" id="reset"><i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>Reset</button>
+        <button class="btn btn-ghost" id="export"><i class="ph ph-copy" aria-hidden="true"></i><span>Copy mapping</span></button>
+      </div>
+      <div class="monitor">
+        <h2>MIDI in</h2>
+        <pre id="monitor">Waiting for the controller.</pre>
+      </div>
+    </aside>
+  </main>
+
+  <script src="profiles.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
